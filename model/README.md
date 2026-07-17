@@ -1,4 +1,6 @@
 Model Directory
+
+
 This directory is intended to store the pre-trained machine learning model and the corresponding text vectorizer.
 
 Before running the application, please make sure you have placed the following files here:
