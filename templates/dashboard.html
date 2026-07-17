@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Spam Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('predict') }}">Predict Spam</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        <span class="welcome-message">Welcome, {{ username }}!</span>
+    </div>
+
+    <div class="container dashboard-container">
+        <h1>Spam Detector Dashboard</h1>
+
+        <!-- Flash messages display -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-widgets">
+            <div class="widget total-emails">
+                <h3>Total Emails Processed</h3>
+                <p id="totalEmails">Loading...</p>
+            </div>
+
+            <div class="widget spam-count">
+                <h3>Spam Emails</h3>
+                <p id="spamCount">Loading...</p>
+            </div>
+
+            <div class="widget ham-count">
+                <h3>Ham Emails</h3>
+                <p id="hamCount">Loading...</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>Daily Spam/Ham Distribution</h3>
+            <canvas id="dailyStatsChart"></canvas>
+        </div>
+
+        <div class="recent-predictions">
+            <h3>Recent Predictions</h3>
+            <table id="recentPredictionsTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Message Snippet</th>
+                        <th>Prediction</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Recent predictions will be loaded here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
