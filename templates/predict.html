@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Spam - Spam Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('predict') }}">Predict Spam</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        <span class="welcome-message">Welcome, {{ current_user.get_username() }}!</span>
+    </div>
+
+    <div class="container prediction-container">
+        <h1>Spam Mail Detector</h1>
+        <p>Enter a message below to classify it as spam or not spam.</p>
+        <textarea id="message-input" placeholder="Type or paste your message here..."></textarea>
+        <button id="classify-btn">Classify Message</button>
+        <div id="result">
+            <!-- The classification result will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        const classifyBtn = document.getElementById('classify-btn');
+        const messageInput = document.getElementById('message-input');
+        const resultDiv = document.getElementById('result');
+
+        classifyBtn.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (!message.trim()) {
+                resultDiv.innerHTML = `<p class="error">Please enter a message.</p>`;
+                return;
+            }
+
+            resultDiv.innerHTML = `<p class="loading">Classifying...</p>`;
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                } else {
+                    const prediction = data.prediction;
+                    const confidence = data.confidence;
+                    const resultClass = prediction === 'Spam' ? 'spam' : 'ham';
+                    resultDiv.innerHTML = `<p>
+                        This message is: <span class="${resultClass}">${prediction}</span>
+                        (Confidence: ${confidence})
+                    </p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<p class="error">An error occurred. Please check the console.</p>`;
+            });
+        });
+    </script>
+</body>
+</html>
